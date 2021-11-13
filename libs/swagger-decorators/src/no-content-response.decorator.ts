@@ -1,9 +1,4 @@
-import {
-  applyDecorators,
-  HttpCode,
-  HttpStatus,
-  SetMetadata,
-} from '@nestjs/common';
+import { applyDecorators, SetMetadata } from '@nestjs/common';
 import {
   ApiNoContentResponse,
   ApiOperation,
@@ -27,7 +22,6 @@ const NO_CONTENT_MESSAGE = `Success status response code indicates that a reques
 export function NoContentResponse(options?: ApiResponseOptions) {
   return applyDecorators(
     SetMetadata(IS_NO_CONTENT_RESPONSE, options),
-    HttpCode(HttpStatus.NO_CONTENT),
     ApiNoContentResponse({
       ...options,
       description: options?.description ?? NO_CONTENT_MESSAGE,

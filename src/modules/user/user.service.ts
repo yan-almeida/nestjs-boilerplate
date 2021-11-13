@@ -1,13 +1,13 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { EntityNotFoundError } from '@app/exceptions';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { paginate } from 'nestjs-typeorm-paginate';
 import { Repository } from 'typeorm';
-import { EntityNotFoundError } from '../../exceptions/entity-not-found-error.exception';
+import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { FilterUserDto } from './dto/filter-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
-
 @Injectable()
 export class UserService {
   constructor(
@@ -41,18 +41,39 @@ export class UserService {
     return user;
   }
 
-  async findOneByEmail(email: string) {
-    const user = await this._userRepo.findOne({
+  findOneByEmail(email: string) {
+    return this._userRepo.findOne({
       where: {
         email,
       },
     });
+  }
+
+  async findUserByRecoveryToken(recoveryToken: string) {
+    const user = await this._userRepo.findOne({
+      where: {
+        recoveryToken,
+      },
+    });
 
     if (!user) {
-      throw new UnauthorizedException();
+      throw new UnprocessableEntityException(
+        'Usuário não solicitou recuperação de senha.',
+      );
     }
 
     return user;
+  }
+
+  async updatePartialUser(
+    id: string,
+    partialUser: QueryDeepPartialEntity<User>,
+  ) {
+    const updateResult = await this._userRepo.save({ id, partialUser });
+
+    if (!updateResult) {
+      throw new EntityNotFoundError(User, id);
+    }
   }
 
   async update(id: string, dto: UpdateUserDto) {
@@ -64,6 +85,7 @@ export class UserService {
 
     return this._userRepo.findOne(id);
   }
+
   async remove(id: string) {
     const deleteResult = await this._userRepo.delete(id);
 

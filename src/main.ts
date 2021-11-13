@@ -1,4 +1,10 @@
 import {
+  BadRequestExceptionFilter,
+  EntityConflictExceptionFilter,
+  EntityNotFoundExceptionFilter,
+  UnprocessableEntityExceptionFilter,
+} from '@app/exceptions';
+import {
   ClassSerializerInterceptor,
   Logger,
   ValidationPipe,
@@ -7,9 +13,6 @@ import { ConfigService } from '@nestjs/config';
 import { NestFactory, Reflector } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-import { BadRequestExceptionFilter } from './exception-filters/bad-request.filter';
-import { EntityConflictExceptionFilter } from './exception-filters/entity-conflict.filter';
-import { EntityNotFoundExceptionFilter } from './exception-filters/entity-not-found.filter';
 
 const bootstrap = async () => {
   const logger = new Logger('MainApi');
@@ -25,6 +28,7 @@ const bootstrap = async () => {
     new EntityNotFoundExceptionFilter(),
     new EntityConflictExceptionFilter(),
     new BadRequestExceptionFilter(),
+    new UnprocessableEntityExceptionFilter(),
   );
   app.useGlobalPipes(
     new ValidationPipe({

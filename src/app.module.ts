@@ -1,3 +1,4 @@
+import { MailerModule } from '@nestjs-modules/mailer';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
@@ -5,26 +6,29 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
 import { default as AppConfig } from './configs/app.config';
 import { default as JwtConfig } from './configs/jwt.config';
+import { default as MailerConfig } from './configs/mailer.config';
 import { default as TypeormConfig } from './configs/orm.config';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
 import { AuthModule } from './modules/auth/auth.module';
+import { PasswordModule } from './modules/password/password.module';
 import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [TypeormConfig, JwtConfig, AppConfig],
+      load: [JwtConfig, AppConfig, MailerConfig],
     }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
     }),
-    TypeOrmModule.forRootAsync({
+    TypeOrmModule.forRoot(TypeormConfig),
+    MailerModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) =>
-        configService.get('database'),
+      useFactory: (configService: ConfigService) => configService.get('mailer'),
     }),
     AuthModule,
+    PasswordModule,
     UserModule,
   ],
 })

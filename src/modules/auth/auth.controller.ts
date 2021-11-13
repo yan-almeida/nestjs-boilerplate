@@ -4,9 +4,10 @@ import {
   OkResponse,
   UnauthorizedResponse,
 } from '@app/swagger-decorators';
-import { Body, Get, Post, Req } from '@nestjs/common';
+import { Body, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth } from '@nestjs/swagger';
 import { Request } from 'express';
-import { JwtGuardSetup } from 'src/decorators/jwt-guard.decorator';
+import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 import { AuthService } from './auth.service';
 import { AuthedDto } from './dto/authed.dto';
 import { LoginAuthDto } from './dto/login-auth.dto';
@@ -24,20 +25,22 @@ export class AuthController {
   @UnauthorizedResponse()
   @BadRequestResponse()
   async create(@Body() dto: LoginAuthDto): Promise<AuthedDto> {
-    const result = await this._authService.validateUser(
+    const loggedUser = await this._authService.loginUser(
       dto.email,
       dto.password,
     );
 
-    return AuthParser.toAuthedDto(result.user, result.token);
+    return AuthParser.toAuthedDto(loggedUser.user, loggedUser.token);
   }
 
   @Get('profile')
   @OkResponse({
     description: 'Verificação de token',
   })
-  @JwtGuardSetup()
+  @ApiBearerAuth()
+  @UnauthorizedResponse()
+  @UseGuards(JwtAuthGuard)
   getProfile(@Req() req: Request) {
-    return req.user;
+    return req.user ?? null;
   }
 }

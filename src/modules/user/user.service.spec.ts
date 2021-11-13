@@ -82,15 +82,6 @@ describe('UserService', () => {
       expect(userService.findOne(uuid())).rejects.toBeInstanceOf(HttpException);
       expect(mockedRepo.findOne).toHaveBeenCalledTimes(1);
     });
-
-    it('deve retornar uma exceção ao não encontrar um usuário pelo email', async () => {
-      mockedRepo.findOne.mockReturnValue(null);
-
-      expect(
-        userService.findOneByEmail('email@email.com'),
-      ).rejects.toBeInstanceOf(HttpException);
-      expect(mockedRepo.findOne).toHaveBeenCalledTimes(1);
-    });
   });
 
   describe('update', () => {

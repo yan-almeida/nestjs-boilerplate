@@ -4,20 +4,20 @@ import {
   Catch,
   ExceptionFilter,
   HttpStatus,
+  UnprocessableEntityException,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { BadRequestError } from 'src/exceptions/bad-request-error.exception';
 
-@Catch(BadRequestError)
-export class BadRequestExceptionFilter implements ExceptionFilter {
-  catch(exception: BadRequestError, host: ArgumentsHost) {
+@Catch(UnprocessableEntityException)
+export class UnprocessableEntityExceptionFilter implements ExceptionFilter {
+  catch(exception: UnprocessableEntityException, host: ArgumentsHost) {
     const context = host.switchToHttp();
     const response = context.getResponse<Response>();
 
     BadRequestResponse({ description: exception.message });
 
-    return response.status(HttpStatus.BAD_REQUEST).json({
-      error: 'Bad request',
+    return response.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
+      error: 'Unprocessable entity',
       message: exception.message,
     });
   }

@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { compare } from 'bcrypt';
+import { compareSync } from 'bcrypt';
 import { JwtPayloadBuilder } from '../../common/builders/jwt-payload.builder';
 import { ITokenUser } from '../../common/interfaces/token-user.interface';
 import { User } from '../user/entities/user.entity';
@@ -12,10 +12,15 @@ export class AuthService {
     private readonly _userService: UserService,
     private readonly _jwtService: JwtService,
   ) {}
-  async validateUser(email: string, password: string): Promise<ITokenUser> {
+
+  async loginUser(email: string, password: string): Promise<ITokenUser> {
     const user = await this._userService.findOneByEmail(email);
 
-    await this.#validateUserPassword(password, user.password);
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+
+    this.#validateUserPassword(password, user.password);
 
     const token = this.#generateToken(user);
 
@@ -24,19 +29,15 @@ export class AuthService {
       token,
     };
   }
-  async #validateUserPassword(plainPass: string, hashedPass: string) {
-    const user = await compare(plainPass, hashedPass);
+  #validateUserPassword(plainPass: string, hashedPass: string) {
+    const user = compareSync(plainPass, hashedPass);
 
     if (!user) {
       throw new UnauthorizedException();
     }
   }
   #generateToken(user: User) {
-    const payload = JwtPayloadBuilder.toPayload(
-      user.id,
-      user.fullName,
-      user.role,
-    );
+    const payload = JwtPayloadBuilder.toUserLogin(user);
 
     return this._jwtService.sign(payload);
   }

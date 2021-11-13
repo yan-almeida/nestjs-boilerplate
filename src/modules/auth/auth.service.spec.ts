@@ -1,5 +1,5 @@
 import { UnauthorizedException } from '@nestjs/common';
-import { JwtModule, JwtService } from '@nestjs/jwt';
+import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ITokenUser } from '../../common/interfaces/token-user.interface';
@@ -14,8 +14,6 @@ const UserServiceMocked = {
 
 describe('AuthService', () => {
   let authService: AuthService;
-  let userService: UserService;
-  let jwtService: JwtService;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -38,8 +36,6 @@ describe('AuthService', () => {
     }).compile();
 
     authService = module.get(AuthService);
-    userService = module.get(UserService);
-    jwtService = module.get(JwtService);
   });
 
   beforeEach(() => {
@@ -58,9 +54,9 @@ describe('AuthService', () => {
 
       const validateUser: ITokenUser = { user, token: expect.any(String) };
 
-      expect(
-        await authService.validateUser(user.email, 'password'),
-      ).toMatchObject(validateUser);
+      expect(await authService.loginUser(user.email, 'password')).toMatchObject(
+        validateUser,
+      );
       expect(UserServiceMocked.findOneByEmail).toHaveBeenCalledTimes(1);
     });
 
@@ -70,7 +66,7 @@ describe('AuthService', () => {
       UserServiceMocked.findOneByEmail.mockResolvedValue(user);
 
       await authService
-        .validateUser(user.email, 'invalid_password')
+        .loginUser(user.email, 'invalid_password')
         .catch((e) => expect(e).toEqual(new UnauthorizedException()));
 
       expect(UserServiceMocked.findOneByEmail).toHaveBeenCalledTimes(1);

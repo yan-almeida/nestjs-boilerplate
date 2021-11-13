@@ -9,3 +9,4 @@ export * from './not-found-response.decorator';
 export * from './ok-response.decorator';
 export * from './paginated-ok-response.decorator';
 export * from './unauthorized-response.decorator';
+export * from './unprocessable-entity-response.decorator';

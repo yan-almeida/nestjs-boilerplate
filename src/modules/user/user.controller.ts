@@ -72,7 +72,6 @@ export class UserController {
     type: UserDto,
     description: 'Atualização de dados do Usuário',
   })
-  @NoContentResponse()
   @NotFoundResponse()
   @BadRequestResponse()
   @JwtGuardSetup()

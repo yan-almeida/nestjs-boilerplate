@@ -1,7 +1,7 @@
 import { applyDecorators, SetMetadata } from '@nestjs/common';
 import { ApiProperty, ApiPropertyOptions } from '@nestjs/swagger';
 import { IsUUID, UUIDVersion, ValidationOptions } from 'class-validator';
-import { v4 } from 'uuid';
+import { v4 as uuid } from 'uuid';
 
 const IS_API_PROPERTY_UUID = 'apiPropertyUuid';
 
@@ -28,7 +28,7 @@ export function ApiPropertyUuid(
       type: String,
       format: 'uuid',
       description: 'GUID - Identificador Único Universal',
-      example: v4(),
+      example: uuid(),
     }),
     IsUUID(version ?? '4', {
       ...validationOptions,

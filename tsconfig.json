@@ -11,18 +11,23 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "incremental": true,
+    "allowJs":true, 
     "paths": {
       "@app/swagger-decorators": [
         "libs/swagger-decorators/src"
       ],
-      "@app/swagger-decorators/*": [
-        "libs/swagger-decorators/src/*"
+      "@app/exceptions": [
+        "libs/exceptions/src"
       ]
     }
   },
+  "moduleDirectories": [
+    "./",
+    "node_modules"
+  ],
   "include": [
     "src",
     "libs/swagger-decorators/src",
-    "ormconfig.ts"
-  ]
+    "libs/exceptions/src",
+]
 }

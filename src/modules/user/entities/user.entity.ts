@@ -1,5 +1,5 @@
 import { genSaltSync, hashSync } from 'bcrypt';
-import { BeforeInsert, Entity } from 'typeorm';
+import { BeforeInsert, BeforeUpdate, Entity } from 'typeorm';
 import { AppRoles } from '../../../app.roles';
 import { UniqueIdentifierEntity } from '../../../common/entities/unique-identifier.entity';
 import { EncryptedColumn } from '../../../decorators/encrypted-column.decorator';
@@ -28,10 +28,15 @@ export class User extends UniqueIdentifierEntity {
   @NormalizedColumn()
   password: string;
 
+  @NormalizedColumn()
+  recoveryToken: string;
+
   @BeforeInsert()
+  @BeforeUpdate()
   private generateHashedPassword() {
     if (this.password) {
-      this.password = hashSync(this.password, genSaltSync());
+      this.password = hashSync(this.password, genSaltSync(10));
+      this.recoveryToken = null;
     }
   }
 }

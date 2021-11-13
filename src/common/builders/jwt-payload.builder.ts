@@ -1,9 +1,23 @@
+import { User } from '../../modules/user/entities/user.entity';
+
 export class JwtPayloadBuilder {
-  static toPayload(userId: string, user: string, role: string): Express.User {
+  static toUserLogin(user: User): Express.User {
     return {
-      userId,
-      user,
-      role,
+      userId: user.id,
+      user: user.fullName,
+      role: user.role,
+    };
+  }
+
+  static toRecoveryToken(
+    user: User,
+    GUID: string,
+    expirationDate: Date,
+  ): Express.Recovery {
+    return {
+      GUID,
+      expirationDate,
+      user: JwtPayloadBuilder.toUserLogin(user),
     };
   }
 }

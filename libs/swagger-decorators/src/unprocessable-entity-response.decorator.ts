@@ -5,10 +5,10 @@ import {
   ApiUnprocessableEntityResponse,
 } from '@nestjs/swagger';
 
-const IS_OK_RESPONSE = 'okResponse';
+const IS_UNPROCESSABLE_ENTITY_RESPONSE = 'unprocessableEntityResponse';
 
 const UNPROCESSABLE_ENTITY_MESSAGE =
-  'Success status response code indicates that the request has succeeded';
+  'The HyperText Transfer Protocol (HTTP) `422 Unprocessable Entity` response status code indicates that the server understands the content type of the request entity, and the syntax of the request entity is correct, but it was unable to process the contained instructions';
 
 /**
  * The HyperText Transfer Protocol (HTTP) `422 Unprocessable Entity` response status code indicates that the server understands the content type of the request entity, and the syntax of the request entity is correct, but it was unable to process the contained instructions.
@@ -18,7 +18,7 @@ const UNPROCESSABLE_ENTITY_MESSAGE =
  */
 export function UnprocessableEntityResponse(options?: ApiResponseOptions) {
   return applyDecorators(
-    SetMetadata(IS_OK_RESPONSE, options),
+    SetMetadata(IS_UNPROCESSABLE_ENTITY_RESPONSE, options),
     ApiUnprocessableEntityResponse({
       ...options,
       description: options?.description ?? UNPROCESSABLE_ENTITY_MESSAGE,

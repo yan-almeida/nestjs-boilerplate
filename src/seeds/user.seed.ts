@@ -1,7 +1,7 @@
 import { AppRoles } from 'src/app.roles';
 import { Connection } from 'typeorm';
 import { Factory, Seeder } from 'typeorm-seeding';
-import { User } from '../entities/user.entity';
+import { User } from '../modules/user/entities/user.entity';
 
 export default class CreateUsers implements Seeder {
   async run(factory: Factory, connection: Connection) {

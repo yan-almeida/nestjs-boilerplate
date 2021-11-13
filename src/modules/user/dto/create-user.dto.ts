@@ -7,12 +7,10 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
+import * as Faker from 'faker-br';
 import { AppRoles } from '../../../app.roles';
 import { KeepAllNumbersTransform } from '../../../common/transformers/keep-all-numbers.transform';
 import { LowerCaseTransform } from '../../../common/transformers/lower-case.transform';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const Faker = require('faker-br');
 
 export class CreateUserDto {
   @ApiProperty({ example: Faker.name.findName() })
