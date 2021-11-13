@@ -7,6 +7,8 @@ import { NormalizedColumn } from '../../../decorators/normalized-column.decorato
 
 @Entity()
 export class User extends UniqueIdentifierEntity {
+  private static SALT_ROUNDS = 10;
+
   @EncryptedColumn()
   fullName: string;
 
@@ -35,7 +37,7 @@ export class User extends UniqueIdentifierEntity {
   @BeforeUpdate()
   private generateHashedPassword() {
     if (this.password) {
-      this.password = hashSync(this.password, genSaltSync(10));
+      this.password = hashSync(this.password, genSaltSync(User.SALT_ROUNDS));
       this.recoveryToken = null;
     }
   }

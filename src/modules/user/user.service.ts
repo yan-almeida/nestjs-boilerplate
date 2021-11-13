@@ -8,6 +8,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { FilterUserDto } from './dto/filter-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
+
 @Injectable()
 export class UserService {
   constructor(
@@ -40,7 +41,6 @@ export class UserService {
 
     return user;
   }
-
   findOneByEmail(email: string) {
     return this._userRepo.findOne({
       where: {
@@ -64,7 +64,6 @@ export class UserService {
 
     return user;
   }
-
   async updatePartialUser(
     id: string,
     partialUser: QueryDeepPartialEntity<User>,
@@ -75,7 +74,6 @@ export class UserService {
       throw new EntityNotFoundError(User, id);
     }
   }
-
   async update(id: string, dto: UpdateUserDto) {
     const updateResult = await this._userRepo.update(id, dto);
 
@@ -85,7 +83,6 @@ export class UserService {
 
     return this._userRepo.findOne(id);
   }
-
   async remove(id: string) {
     const deleteResult = await this._userRepo.delete(id);
 

@@ -20,7 +20,7 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
-    this.#validateUserPassword(password, user.password);
+    await this.#validateUserPassword(password, user.password);
 
     const token = this.#generateToken(user);
 
@@ -29,7 +29,7 @@ export class AuthService {
       token,
     };
   }
-  #validateUserPassword(plainPass: string, hashedPass: string) {
+  async #validateUserPassword(plainPass: string, hashedPass: string) {
     const user = compareSync(plainPass, hashedPass);
 
     if (!user) {
