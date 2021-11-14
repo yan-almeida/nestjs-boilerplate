@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { compareSync } from 'bcrypt';
+import { compare } from 'bcrypt';
 import { JwtPayloadBuilder } from '../../common/builders/jwt-payload.builder';
 import { ITokenUser } from '../../common/interfaces/token-user.interface';
 import { User } from '../user/entities/user.entity';
@@ -30,7 +30,7 @@ export class AuthService {
     };
   }
   async #validateUserPassword(plainPass: string, hashedPass: string) {
-    const user = compareSync(plainPass, hashedPass);
+    const user = await compare(plainPass, hashedPass);
 
     if (!user) {
       throw new UnauthorizedException();

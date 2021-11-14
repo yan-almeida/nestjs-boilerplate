@@ -17,23 +17,28 @@ export class PasswordService {
 
   constructor(
     private readonly _userService: UserService,
-    // private readonly _passwordProxy: PasswordProxy,
     private readonly _jwtService: JwtService,
     private readonly _configService: ConfigService,
     private readonly _mailerService: MailerService,
   ) {}
 
   async recoveryPassword(dto: RecoveryPasswordDto) {
-    const recoveryToken = await this.#generateRecoveryToken(dto.email);
+    const user = await this._userService.findOneByEmail(dto.email);
+    if (!user) {
+      return;
+    }
+
+    const recoveryToken = await this.#generateRecoveryToken(user);
 
     const generateUrlToRecoveryToken =
       this.#generateUrlToRecoveryToken(recoveryToken);
 
-    return this._mailerService.sendMail({
+    await this._mailerService.sendMail({
       to: dto.email,
       subject: '-- - Esqueci minha senha',
       template: __dirname + '../../templates/recovery-password.hbs',
       context: {
+        user: user.fullName,
         generateUrlToRecoveryToken,
       },
     });
@@ -52,8 +57,11 @@ export class PasswordService {
 
     new PasswordProxy(recoveryToken, userRecoveryToken).validateRecoveryToken();
 
+    const password = await UserService.hashPassword(dto.newPassword);
+
     await this._userService.updatePartialUser(user.id, {
-      password: dto.newPassword,
+      password,
+      recoveryToken: null,
     });
   }
   resetPassword() {
@@ -64,13 +72,7 @@ export class PasswordService {
       'app.urls.web',
     )}/resetar-senha?recoveryToken=${recoveryToken}`;
   }
-  async #generateRecoveryToken(email: string) {
-    const user = await this._userService.findOneByEmail(email);
-
-    if (!user) {
-      return;
-    }
-
+  async #generateRecoveryToken(user: User) {
     const expirationDate = addDays(new Date(), PasswordService.AMOUNT_ADD_DAY);
 
     const hashedRecoveryToken = this.#generateHashedTokenToRecovery(

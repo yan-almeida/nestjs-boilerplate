@@ -13,11 +13,12 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     PassportModule,
     JwtModule.registerAsync({
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => configService.get('jwt'),
+      useFactory: async (configService: ConfigService) =>
+        configService.get('jwt'),
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, JwtModule],
-  exports: [AuthService, JwtStrategy, JwtModule],
+  providers: [AuthService, JwtStrategy],
+  exports: [AuthService, JwtModule],
 })
 export class AuthModule {}

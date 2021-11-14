@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { ApiConflictResponse } from '@nestjs/swagger';
 import { Response } from 'express';
-import { EntityConflictError } from '.';
+import { EntityConflictError } from '../exceptions/entity-conflict-error.exception';
 
 @Catch(EntityConflictError)
 export class EntityConflictExceptionFilter implements ExceptionFilter {

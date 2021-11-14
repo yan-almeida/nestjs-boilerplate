@@ -123,8 +123,7 @@
       "<rootDir>/../libs/"
     ],
     "moduleNameMapper": {
-      "^@app/swagger-decorators(|/.*)$": "<rootDir>/libs/swagger-decorators/src/",
-      "^@app/exceptions(|/.*)$": "<rootDir>/libs/exceptions/src/"
+      "^@app/swagger-decorators(|/.*)$": "<rootDir>/libs/swagger-decorators/src/$1"
     }
   }
 }

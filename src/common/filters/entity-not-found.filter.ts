@@ -6,7 +6,8 @@ import {
 } from '@nestjs/common';
 import { ApiNotFoundResponse } from '@nestjs/swagger';
 import { Response } from 'express';
-import { EntityNotFoundError, NotFoundError } from '.';
+import { NotFoundError } from 'rxjs';
+import { EntityNotFoundError } from 'typeorm';
 
 @Catch(EntityNotFoundError, NotFoundError)
 export class EntityNotFoundExceptionFilter implements ExceptionFilter {

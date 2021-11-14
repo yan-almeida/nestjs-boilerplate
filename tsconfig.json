@@ -15,9 +15,6 @@
     "paths": {
       "@app/swagger-decorators": [
         "libs/swagger-decorators/src"
-      ],
-      "@app/exceptions": [
-        "libs/exceptions/src"
       ]
     }
   },
@@ -28,6 +25,5 @@
   "include": [
     "src",
     "libs/swagger-decorators/src",
-    "libs/exceptions/src",
 ]
 }

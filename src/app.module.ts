@@ -24,8 +24,10 @@ import { UserModule } from './modules/user/user.module';
     }),
     TypeOrmModule.forRoot(TypeormConfig),
     MailerModule.forRootAsync({
+      imports: [ConfigService],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => configService.get('mailer'),
+      useFactory: async (configService: ConfigService) =>
+        configService.get('mailer'),
     }),
     AuthModule,
     PasswordModule,

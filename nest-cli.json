@@ -8,15 +8,6 @@
     "webpack": true
   },
   "projects": {
-    "exceptions": {
-      "type": "library",
-      "root": "libs/exceptions",
-      "entryFile": "index",
-      "sourceRoot": "libs/exceptions/src",
-      "compilerOptions": {
-        "tsConfigPath": "libs/exceptions/tsconfig.lib.json"
-      }
-    },
     "swagger-decorators": {
       "type": "library",
       "root": "libs/swagger-decorators",

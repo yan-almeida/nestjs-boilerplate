@@ -1,9 +1,9 @@
-import { EntityNotFoundError } from '@app/exceptions';
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { genSaltSync, hash } from 'bcrypt';
 import { paginate } from 'nestjs-typeorm-paginate';
 import { Repository } from 'typeorm';
-import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { EntityNotFoundError } from '../../common/exceptions/entity-not-found-error.exception';
 import { CreateUserDto } from './dto/create-user.dto';
 import { FilterUserDto } from './dto/filter-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -11,13 +11,20 @@ import { User } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
+  private static SALT_ROUNDS = 10;
+
   constructor(
     @InjectRepository(User)
     private readonly _userRepo: Repository<User>,
   ) {}
 
   async create(dto: CreateUserDto) {
-    const user = this._userRepo.create(dto);
+    const password = await UserService.hashPassword(dto.password);
+
+    const user = this._userRepo.create({
+      ...dto,
+      password,
+    });
 
     return this._userRepo.save(user);
   }
@@ -48,7 +55,6 @@ export class UserService {
       },
     });
   }
-
   async findUserByRecoveryToken(recoveryToken: string) {
     const user = await this._userRepo.findOne({
       where: {
@@ -64,11 +70,8 @@ export class UserService {
 
     return user;
   }
-  async updatePartialUser(
-    id: string,
-    partialUser: QueryDeepPartialEntity<User>,
-  ) {
-    const updateResult = await this._userRepo.save({ id, partialUser });
+  async updatePartialUser(id: string, partialUser: Partial<User>) {
+    const updateResult = await this._userRepo.update(id, partialUser);
 
     if (!updateResult) {
       throw new EntityNotFoundError(User, id);
@@ -89,5 +92,9 @@ export class UserService {
     if (deleteResult.affected === 0) {
       throw new EntityNotFoundError(User, id);
     }
+  }
+
+  static hashPassword(password: string) {
+    return hash(password, genSaltSync());
   }
 }
