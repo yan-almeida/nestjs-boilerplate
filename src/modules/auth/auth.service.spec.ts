@@ -5,12 +5,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ITokenUser } from '../../common/interfaces/token-user.interface';
 import { UserMock } from '../user/mocks/user.mock';
 import { UserService } from '../user/user.service';
+import {
+  UserServiceMocked,
+  UserServiceProvider,
+} from '../user/user.service.spec';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
-
-const UserServiceMocked = {
-  findOneByEmail: jest.fn(),
-};
 
 describe('AuthService', () => {
   let authService: AuthService;
@@ -24,15 +24,7 @@ describe('AuthService', () => {
           signOptions: { expiresIn: '10 days' },
         }),
       ],
-      providers: [
-        AuthService,
-        JwtStrategy,
-        UserService,
-        {
-          provide: UserService,
-          useValue: UserServiceMocked,
-        },
-      ],
+      providers: [AuthService, JwtStrategy, UserService, UserServiceProvider],
     }).compile();
 
     authService = module.get(AuthService);

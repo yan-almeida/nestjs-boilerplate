@@ -1,9 +1,10 @@
-import { UnprocessableEntityException } from '@nestjs/common';
+import { Logger, UnprocessableEntityException } from '@nestjs/common';
 import { isEqual, isFuture } from 'date-fns';
 
 export class PasswordProxy {
-  private _recoveryToken: Express.Recovery;
-  private _userRecoveryToken: Express.Recovery;
+  private readonly _logger = new Logger('PasswordProxy');
+  private readonly _recoveryToken: Express.Recovery;
+  private readonly _userRecoveryToken: Express.Recovery;
 
   constructor(
     recoveryToken: Express.Recovery,
@@ -12,16 +13,7 @@ export class PasswordProxy {
     this._recoveryToken = recoveryToken;
     this._userRecoveryToken = userRecoveryToken;
   }
-
-  validateRecoveryToken() {
-    this.#validateIfRecoveryTokenExpired();
-    this.#validateIfExpirationDateIsEquals();
-    this.#validateIfGUIDIsEquals();
-
-    return this._userRecoveryToken;
-  }
-
-  #validateIfRecoveryTokenExpired() {
+  validateIfRecoveryTokenExpired() {
     const isValidExpirationDate = isFuture(
       new Date(this._recoveryToken.expirationDate),
     );
@@ -34,10 +26,11 @@ export class PasswordProxy {
 
     return this;
   }
-  #validateIfGUIDIsEquals() {
+  validateIfGUIDIsEquals() {
     const isEquals = this._recoveryToken.GUID === this._userRecoveryToken.GUID;
 
     if (!isEquals) {
+      this._logger.error('GUID não é identico');
       throw new UnprocessableEntityException(
         'Token de recuperação é inválido.',
       );
@@ -46,13 +39,14 @@ export class PasswordProxy {
     return this;
   }
 
-  #validateIfExpirationDateIsEquals() {
+  validateIfExpirationDateIsEquals() {
     const isEquals = isEqual(
       new Date(this._recoveryToken.expirationDate),
       new Date(this._userRecoveryToken.expirationDate),
     );
 
     if (!isEquals) {
+      this._logger.error('Data de expiração não é identica');
       throw new UnprocessableEntityException(
         'Token de recuperação é inválido.',
       );

@@ -1,6 +1,6 @@
-import { genSaltSync, hashSync } from 'bcrypt';
 import { v4 } from 'uuid';
 import { AppRoles } from '../../../app.roles';
+import { BcryptService } from '../../bcrypt/bcrypt.service';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { User } from '../entities/user.entity';
 
@@ -16,7 +16,7 @@ export class UserMock {
       phoneNumber: Faker.phone.phoneNumber(),
       address: `${Faker.address.streetAddress()} - ${Faker.address.state()}`,
       role: AppRoles.USER,
-      password: hashSync('password', genSaltSync()),
+      password: BcryptService.hashSync('password'),
       createdAt: new Date(),
       updatedAt: new Date(),
     } as User;

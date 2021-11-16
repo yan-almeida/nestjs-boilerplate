@@ -1,4 +1,4 @@
-import { Body, HttpCode, HttpStatus, Post, Put } from '@nestjs/common';
+import { Body, HttpCode, HttpStatus, Post } from '@nestjs/common';
 import {
   ApiController,
   NoContentResponse,
@@ -27,9 +27,9 @@ export class PasswordController {
     return this._passwordService.recoveryPasswordConfirm(dto);
   }
 
-  @Put('reset')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  resetPassword() {
-    return this._passwordService.resetPassword();
-  }
+  // @Put('reset')
+  // @HttpCode(HttpStatus.NO_CONTENT)
+  // resetPassword() {
+  //   return this._passwordService.resetPassword();
+  // }
 }

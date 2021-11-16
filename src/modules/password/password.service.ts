@@ -6,6 +6,7 @@ import { addDays } from 'date-fns';
 import { v4 as uuid } from 'uuid';
 import { JwtPayloadBuilder } from '../../common/builders/jwt-payload.builder';
 import { RecoveryPasswordDto } from '../auth/dto/recovery-password.dto';
+import { BcryptService } from '../bcrypt/bcrypt.service';
 import { User } from '../user/entities/user.entity';
 import { UserService } from '../user/user.service';
 import { RecoveryPasswordConfirmDto } from './dtos/recovery-password-confirm.dto';
@@ -55,9 +56,12 @@ export class PasswordService {
       user.recoveryToken,
     );
 
-    new PasswordProxy(recoveryToken, userRecoveryToken).validateRecoveryToken();
+    new PasswordProxy(recoveryToken, userRecoveryToken)
+      .validateIfRecoveryTokenExpired()
+      .validateIfExpirationDateIsEquals()
+      .validateIfGUIDIsEquals();
 
-    const password = await UserService.hashPassword(dto.newPassword);
+    const password = await BcryptService.hash(dto.newPassword);
 
     await this._userService.updatePartialUser(user.id, {
       password,
@@ -65,6 +69,8 @@ export class PasswordService {
     });
   }
   resetPassword() {
+    // TODO: reset de senha
+
     return;
   }
   #generateUrlToRecoveryToken(recoveryToken: string) {

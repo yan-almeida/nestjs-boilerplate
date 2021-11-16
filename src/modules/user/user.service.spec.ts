@@ -1,4 +1,4 @@
-import { HttpException } from '@nestjs/common';
+import { HttpException, Provider } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
@@ -6,6 +6,21 @@ import { TestMock } from '../../common/mocks/test.mock';
 import { User } from './entities/user.entity';
 import { UserMock } from './mocks/user.mock';
 import { UserService } from './user.service';
+
+export const UserServiceMocked = {
+  create: jest.fn(),
+  paginate: jest.fn(),
+  findOne: jest.fn(),
+  findOneByEmail: jest.fn(),
+  findUserByRecoveryToken: jest.fn(),
+  updatePartialUser: jest.fn(),
+  update: jest.fn(),
+  remove: jest.fn(),
+};
+export const UserServiceProvider: Provider = {
+  provide: UserService,
+  useValue: UserServiceMocked,
+};
 
 describe('UserService', () => {
   let userService: UserService;
