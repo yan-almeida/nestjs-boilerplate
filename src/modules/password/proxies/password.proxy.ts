@@ -13,6 +13,7 @@ export class PasswordProxy {
     this._recoveryToken = recoveryToken;
     this._userRecoveryToken = userRecoveryToken;
   }
+
   validateIfRecoveryTokenExpired() {
     const isValidExpirationDate = isFuture(
       new Date(this._recoveryToken.expirationDate),
@@ -38,7 +39,6 @@ export class PasswordProxy {
 
     return this;
   }
-
   validateIfExpirationDateIsEquals() {
     const isEquals = isEqual(
       new Date(this._recoveryToken.expirationDate),

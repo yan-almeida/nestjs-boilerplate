@@ -1,4 +1,3 @@
-import { BadRequestResponse } from '@app/swagger-decorators';
 import {
   ArgumentsHost,
   Catch,
@@ -6,6 +5,7 @@ import {
   HttpStatus,
   UnprocessableEntityException,
 } from '@nestjs/common';
+import { ApiUnprocessableEntityResponse } from '@nestjs/swagger';
 import { Response } from 'express';
 
 @Catch(UnprocessableEntityException)
@@ -14,7 +14,7 @@ export class UnprocessableEntityExceptionFilter implements ExceptionFilter {
     const context = host.switchToHttp();
     const response = context.getResponse<Response>();
 
-    BadRequestResponse({ description: exception.message });
+    ApiUnprocessableEntityResponse({ description: exception.message });
 
     return response.status(HttpStatus.UNPROCESSABLE_ENTITY).json({
       error: 'Unprocessable entity',

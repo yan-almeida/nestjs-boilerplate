@@ -71,31 +71,60 @@ describe('UserService', () => {
   });
 
   describe('findOne', () => {
-    it('deve retornar um usuário existente pelo id', async () => {
-      const user = UserMock.validUser();
-      mockedRepo.findOne.mockReturnValue(user);
+    describe('por ID', () => {
+      it('deve retornar um usuário existente pelo id', async () => {
+        const user = UserMock.validUser();
+        mockedRepo.findOne.mockReturnValue(user);
 
-      const searchedUser = await userService.findOne(uuid());
+        const searchedUser = await userService.findOne(uuid());
 
-      expect(searchedUser).toMatchObject(user);
-      expect(mockedRepo.findOne).toHaveBeenCalledTimes(1);
+        expect(searchedUser).toMatchObject(user);
+        expect(mockedRepo.findOne).toHaveBeenCalledTimes(1);
+      });
+
+      it('deve retornar uma exceção ao não encontrar um usuário pelo id', async () => {
+        mockedRepo.findOne.mockReturnValue(null);
+
+        expect(userService.findOne(uuid())).rejects.toBeInstanceOf(
+          HttpException,
+        );
+        expect(mockedRepo.findOne).toHaveBeenCalledTimes(1);
+      });
     });
 
-    it('deve retornar um usuário existente pelo email', async () => {
-      const user = UserMock.validUser();
-      mockedRepo.findOne.mockReturnValue(user);
+    describe('por email', () => {
+      it('deve retornar um usuário existente pelo email', async () => {
+        const user = UserMock.validUser();
+        mockedRepo.findOne.mockReturnValue(user);
 
-      const searchedUser = await userService.findOneByEmail(user.email);
+        const searchedUser = await userService.findOneByEmail(user.email);
 
-      expect(searchedUser).toMatchObject(user);
-      expect(mockedRepo.findOne).toHaveBeenCalledTimes(1);
+        expect(searchedUser).toMatchObject(user);
+        expect(mockedRepo.findOne).toHaveBeenCalledTimes(1);
+      });
     });
 
-    it('deve retornar uma exceção ao não encontrar um usuário pelo id', async () => {
-      mockedRepo.findOne.mockReturnValue(null);
+    describe('por token de recuperação', () => {
+      it('deve retornar um usuário existente pelo token de recuperação', async () => {
+        const user = UserMock.validUser();
+        mockedRepo.findOne.mockReturnValue(user);
 
-      expect(userService.findOne(uuid())).rejects.toBeInstanceOf(HttpException);
-      expect(mockedRepo.findOne).toHaveBeenCalledTimes(1);
+        const searchedUser = await userService.findUserByRecoveryToken(
+          user.recoveryToken,
+        );
+
+        expect(searchedUser).toMatchObject(user);
+        expect(mockedRepo.findOne).toHaveBeenCalledTimes(1);
+      });
+
+      it('deve retornar uma exceção ao não encontrar um usuário pelo token de recuperação', async () => {
+        mockedRepo.findOne.mockReturnValue(null);
+
+        expect(
+          userService.findUserByRecoveryToken('recovery.token'),
+        ).rejects.toBeInstanceOf(HttpException);
+        expect(mockedRepo.findOne).toHaveBeenCalledTimes(1);
+      });
     });
   });
 
@@ -111,6 +140,16 @@ describe('UserService', () => {
       expect(updatedUser).toMatchObject(user);
       expect(mockedRepo.update).toHaveBeenCalledTimes(1);
       expect(mockedRepo.findOne).toHaveBeenCalledTimes(1);
+    });
+
+    it('deve atualizar um usuário - utilizado internamente', async () => {
+      const user = UserMock.validUser();
+
+      mockedRepo.update.mockReturnValue(user);
+
+      await userService.updatePartialUser(user.id, user);
+
+      expect(mockedRepo.update).toHaveBeenCalledTimes(1);
     });
 
     it('deve retornar uma exceção ao não encontrar um usuário para atualizar', async () => {

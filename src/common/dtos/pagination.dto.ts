@@ -40,14 +40,14 @@ export abstract class PaginationDto {
 
   @ApiPropertyOptional({
     description: 'Entidades a partir de uma data',
-    example: format(subWeeks(new Date(), SUB_WEEK), 'dd/mm/yyyy'),
+    example: format(subWeeks(new Date(), SUB_WEEK), 'yyyy-MM-dd'),
   })
   @IsOptional()
   startAt?: string;
 
   @ApiPropertyOptional({
     description: 'Entidades até de uma data',
-    example: format(new Date(), 'dd/mm/yyyy'),
+    example: format(new Date(), 'yyyy-MM-dd'),
   })
   @IsOptional()
   endAt?: string;

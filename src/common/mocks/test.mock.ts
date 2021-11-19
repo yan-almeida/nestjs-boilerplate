@@ -1,5 +1,11 @@
 import { PaginatedDto } from '../dtos/paginated.dto';
 
+export function mockFunction<T, Y extends T[]>(
+  implementation?: (...args: Y) => T,
+) {
+  return jest.fn<T, T[]>(implementation);
+}
+
 export class TestMock {
   static nonAffectedRows() {
     return {
@@ -24,14 +30,14 @@ export class TestMock {
       }),
     }));
   }
-  static mockedRepo() {
+  static mockedRepo<T = any>() {
     return {
-      save: jest.fn(),
-      create: jest.fn(),
-      find: jest.fn(),
-      findOne: jest.fn(),
-      update: jest.fn(),
-      delete: jest.fn(),
+      save: mockFunction<T, T[]>(),
+      create: mockFunction<T, T[]>(),
+      find: mockFunction<T, T[]>(),
+      findOne: mockFunction<T, T[]>(),
+      update: mockFunction<T, T[]>(),
+      delete: mockFunction<T, T[]>(),
       createQueryBuilder: this.createQueryBuilderSetup(),
     };
   }

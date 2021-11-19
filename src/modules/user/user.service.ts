@@ -71,7 +71,7 @@ export class UserService {
   async updatePartialUser(id: string, partialUser: Partial<User>) {
     const updateResult = await this._userRepo.update(id, partialUser);
 
-    if (!updateResult) {
+    if (updateResult.affected === 0) {
       throw new EntityNotFoundError(User, id);
     }
   }
