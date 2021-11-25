@@ -10,6 +10,7 @@ import { BcryptService } from '../bcrypt/bcrypt.service';
 import { User } from '../user/entities/user.entity';
 import { UserService } from '../user/user.service';
 import { RecoveryPasswordConfirmDto } from './dtos/recovery-password-confirm.dto';
+import { ResetPasswordDto } from './dtos/reset-password.dto';
 import { PasswordProxy } from './proxies/password.proxy';
 
 @Injectable()
@@ -68,10 +69,27 @@ export class PasswordService {
       recoveryToken: null,
     });
   }
-  resetPassword() {
-    // TODO: reset de senha
+  async resetPassword(userId: string, dto: ResetPasswordDto) {
+    const user = await this._userService.findOne(userId);
 
-    return;
+    const newPassword = await BcryptService.hash(dto.newPassword);
+
+    this.#validateIfcurrentPasswordAndNewPasswordIsEquals(
+      user.password,
+      newPassword,
+    );
+
+    await this._userService.updatePartialUser(userId, {
+      password: dto.newPassword,
+    });
+  }
+  #validateIfcurrentPasswordAndNewPasswordIsEquals(
+    currentPassword: string,
+    newPassword: string,
+  ) {
+    if (currentPassword === newPassword) {
+      throw new UnprocessableEntityException('As senhas são identicas.');
+    }
   }
   #generateUrlToRecoveryToken(recoveryToken: string) {
     return `${this._configService.get(
