@@ -18,7 +18,7 @@ export class BadRequestExceptionFilter implements ExceptionFilter {
 
     return response.status(HttpStatus.BAD_REQUEST).json({
       error: 'Bad request',
-      message: exception.message,
+      message: (exception.getResponse() as any).message,
     });
   }
 }

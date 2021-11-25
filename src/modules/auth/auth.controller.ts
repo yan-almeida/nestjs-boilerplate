@@ -4,7 +4,15 @@ import {
   OkResponse,
   UnauthorizedResponse,
 } from '@app/swagger-decorators';
-import { Body, Get, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { Request } from 'express';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
@@ -18,6 +26,7 @@ export class AuthController {
   constructor(private readonly _authService: AuthService) {}
 
   @Post('sign-in')
+  @HttpCode(HttpStatus.OK)
   @OkResponse({
     description: 'Autenticação',
     type: AuthedDto,
