@@ -1,0 +1,58 @@
+config:
+  target: "https://tads-avancado.herokuapp.com/v1/api"  
+  processor: "helpers/pre-request.js"
+  phases:    
+    - duration: 60
+      arrivalRate: 3
+  timeout: 40
+scenarios:
+  - flow:
+    - function: "generateRandomUser"
+    - post:
+        url: "/user"
+        json: "{{ payload }}" 
+        expect:
+          - statusCode: 201
+        capture:
+          json: "$.email"
+          as: "emailCreatedUser"
+    - post:
+        url: "/auth/login"
+        json:
+          username: "{{ emailCreatedUser }}"
+          password: "teste123"
+        expect:
+          - statusCode: 200
+        capture:
+          json: "$"
+          as: "loggedUser"
+    - get:
+        headers:
+          Authorization: "Bearer {{ loggedUser.token }}"
+        url: "/user/{{ loggedUser.user.id }}"
+        expect:
+          - statusCode: 200
+    - patch:
+        headers:
+          Authorization: "Bearer {{ loggedUser.token }}"
+        url: "/user/{{ loggedUser.user.id }}"
+        json: 
+          fullName: "Passei pelo teste"
+        expect:
+          - statusCode: 200
+    - put:
+        headers:
+          Authorization: "Bearer {{ loggedUser.token }}"
+        url: "/password/reset"
+        json: 
+          currentPassword: "{{ teste123 }}"
+          newPassword: "{{ passeiPeloTeste123 }}"
+        expect:
+          - statusCode: 200
+    - post:
+        url: "/auth/login"
+        json:
+          username: "{{ emailCreatedUser }}"
+          password: "passeiPeloTeste123"
+        expect:
+          - statusCode: 200
