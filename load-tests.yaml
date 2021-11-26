@@ -2,7 +2,7 @@ config:
   target: "https://tads-avancado.herokuapp.com/v1/api"  
   processor: "helpers/pre-request.js"
   phases:    
-    - duration: 60
+    - duration: 20
       arrivalRate: 3
   timeout: 40
 scenarios:
@@ -17,7 +17,7 @@ scenarios:
           json: "$.email"
           as: "emailCreatedUser"
     - post:
-        url: "/auth/login"
+        url: "/auth/sign-in"
         json:
           username: "{{ emailCreatedUser }}"
           password: "teste123"

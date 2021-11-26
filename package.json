@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": false,
   "scripts": {
-    "artillery:run": "artillery run load-tests.yaml"
+    "artillery:run": "DEBUG=http artillery run load-tests.yaml"
   },
   "repository": {
     "type": "git"

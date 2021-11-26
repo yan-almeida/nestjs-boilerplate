@@ -1,12 +1,10 @@
 'use strict';
 var Faker = require('faker-br');
-const { kinships } = require('./constants');
 
 module.exports = {
   generateRandomPayload,
   printStatus,
   generateRandomUser,
-  generateDeliveryRequest
 };
 
 function printStatus (requestParams, response, context, ee, next) {
@@ -24,7 +22,6 @@ function generateRandomPayload (userContext, events, done) {
   userContext.vars.payload = payload;
   return done();
 }
-
 
 function generateRandomUser (userContext, events, done) {
   var payload = {
